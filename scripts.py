@@ -4,7 +4,8 @@ class scripts():
         lst = []
         for line in lines:
             temp_df = df.loc[(df['line'] == line)]
-            lst.append(temp_df.loc[df_])
+            max_delay = temp_df.loc[(temp_df['delay_minutes'].max())]
+            lst.append(temp_df.loc[temp_df['delay_minutes'] == max_delay], 'train_id')
 
     def get_max_delay(df,lines):
         test_list = []
