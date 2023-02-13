@@ -18,5 +18,5 @@ class scripts():
         for line in lines:
             temp_df = df.loc[(df['line'] == line)]
             lst.append(temp_df['delay_minutes'].mean())
-        return lst
+        return ls
     
