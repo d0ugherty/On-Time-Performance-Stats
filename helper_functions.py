@@ -26,4 +26,11 @@ class helper():
             temp_df = df.loc[(df['line'] == line)]
             lst.append(float(temp_df['delay_minutes'].mean()))
         return lst
-    
+
+    # return list of dates which had the longest delays
+    def get_delay_date(df,lines):
+        lst = []
+        for line in lines:
+            temp_df = df.loc[(df['line'] == line)]
+            lst.append(temp_df.loc[temp_df['delay_minutes'] == temp_df['delay_minutes'].max(), 'date'])
+        return lst
