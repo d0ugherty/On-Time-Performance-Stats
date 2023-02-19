@@ -1,6 +1,5 @@
 # Functions that can be called to hopefully make my life easier
 # and make the project more readable
-
 class helper():
 
     # return list of train ids with the longest delays
@@ -24,6 +23,7 @@ class helper():
         lst = []
         for line in lines:
             temp_df = df.loc[(df['line'] == line)]
+            temp_df = temp_df.astype({'delay_minutes' : 'float64'})
             lst.append(float(temp_df['delay_minutes'].mean()))
         return lst
 
@@ -32,5 +32,6 @@ class helper():
         lst = []
         for line in lines:
             temp_df = df.loc[(df['line'] == line)]
-            lst.append(temp_df.loc[temp_df['delay_minutes'] == temp_df['delay_minutes'].max(), 'date'])
+            temp_df = temp_df.astype({'date':'datetime64[ns]'})
+            lst.append(temp_df[temp_df['delay_minutes'] == temp_df['delay_minutes'].max()]['date'].values[0])
         return lst
