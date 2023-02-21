@@ -53,7 +53,7 @@ class helper():
     
     ### clean up services dataframes
     ### Drop status column bc it's not used and lateness for Amtrak is not tracked
-    ### in the CSV file
+    ### in the CSV file. Meadowlands is a special service so that is dropped as well.
     def format_services(current_df):
         current_df.drop(labels=['status'], axis=1, inplace=True)
         current_df.drop(current_df[current_df['type'] == 'Amtrak'].index, inplace=True)
@@ -68,13 +68,20 @@ class helper():
                         'actual_time' : 'datetime64',
                         'delay_minutes' : 'float16',
                         'line' : 'category',
-                        'type' : 'category'})
+                        'type' : 'category'},
+                        errors='ignore')
+        new_df.drop(new_df[new_df['line'] == 'Meadowlands Rail'].index, inplace=True)
         return new_df
 
-    #create new dataframe
+    ### create new dataframe and assign types
+    ### this is used for breaking down performence by rail line
     def create_new_dataframe(list_njt_lines, list_max_delays, list_avg_delays, list_dates):
         df = pd.DataFrame({'Longest Delay (minutes)': list_max_delays.values,
                                     'Average Delay (minutes)': list_avg_delays.values,
                                     'Date of Longest Delay' : list_dates.values},
                                         index=list_njt_lines)
+        df = df.astype({'Longest Delay (minutes)' :'float16',
+                            'Average Delay (minutes)' :'float16',
+                            'Date of Longest Delay' : 'datetime64'
+                            })
         return df
