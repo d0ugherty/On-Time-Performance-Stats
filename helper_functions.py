@@ -7,7 +7,7 @@ class helper():
         lst = []
         for line in lines:
             temp_df = df.loc[(df['line'] == line)]
-            lst.append((temp_df.loc[temp_df['delay_minutes'] == temp_df['delay_minutes'].max(), 'train_id']))
+            lst.append(temp_df[temp_df['delay_minutes'] == temp_df['delay_minutes'].max()]['train_id'])
         return lst
     
     # return list of the longest delay (in minutes) for each line
@@ -35,3 +35,4 @@ class helper():
             temp_df = temp_df.astype({'date':'datetime64[ns]'})
             lst.append(temp_df[temp_df['delay_minutes'] == temp_df['delay_minutes'].max()]['date'].values[0])
         return lst
+        
