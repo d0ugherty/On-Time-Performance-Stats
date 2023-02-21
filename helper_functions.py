@@ -32,7 +32,6 @@ class helper():
         lst = []
         for line in lines:
             try:
-                print(line)
                 temp_df = df.loc[(df['line'] == line)]
                 temp_df = temp_df.astype({'date':'datetime64[ns]'})
                 date = temp_df[temp_df['delay_minutes'] == temp_df['delay_minutes'].max()]['date']
