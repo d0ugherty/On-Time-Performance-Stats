@@ -31,8 +31,12 @@ class helper():
     def get_delay_date(df,lines):
         lst = []
         for line in lines:
-            temp_df = df.loc[(df['line'] == line)]
-            temp_df = temp_df.astype({'date':'datetime64[ns]'})
-            lst.append(temp_df[temp_df['delay_minutes'] == temp_df['delay_minutes'].max()]['date'].values[0])
+            try:
+                print(line)
+                temp_df = df.loc[(df['line'] == line)]
+                temp_df = temp_df.astype({'date':'datetime64[ns]'})
+                date = temp_df[temp_df['delay_minutes'] == temp_df['delay_minutes'].max()]['date']
+                lst.append(date.values[0])
+            except:
+                print("get delay date error")
         return lst
-        
