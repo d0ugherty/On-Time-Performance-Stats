@@ -45,8 +45,10 @@ class helper():
 
     # clean up weather dataframes
     def format_weather(current_df, month=""):
+        print("Formatting weather dataframe...")
         new_df = current_df.astype({'STATION':'category',
                                     'DATE':'datetime64[ns]'})
+        
         new_df.drop(labels=['ELEVATION', 'MDSF', 'AWND', 'SNWD',
                             'WESD', 'WESF','WT01', 'WT02', 'WT03',
                             'WT04', 'WT05',"WT06","WT07","WT08",
@@ -61,8 +63,10 @@ class helper():
     ### Drop status column bc it's not used and lateness for Amtrak is not tracked
     ### in the CSV file. Meadowlands is a special service so that is dropped as well.
     def format_services(current_df):
+        print("Dropping columns...")
         current_df.drop(labels=['status'], axis=1, inplace=True)
         current_df.drop(current_df[current_df['type'] == 'Amtrak'].index, inplace=True)
+        print("Changing datatypes...")
         new_df = current_df.astype({'date' : 'datetime64[ns]',
                         'train_id' : 'category',
                         'stop_sequence' : 'float16',
@@ -77,6 +81,7 @@ class helper():
                         'type' : 'category'},
                         errors='ignore')
         new_df.drop(new_df[new_df['line'] == 'Meadowlands Rail'].index, inplace=True)
+        print("Done formatting dataframe")
         return new_df
 
     ### create new dataframe and assign types
@@ -95,6 +100,8 @@ class helper():
     def combine_csvs(directory):
         csv_files = [f for f in os.listdir(directory) if f.endswith('.csv')]
         dfs = []
+
+        print("Combining CSV files....")
         for file in csv_files:
             df = pd.read_csv(os.path.join(directory, file))
             dfs.append(df)
@@ -102,6 +109,9 @@ class helper():
         combined_df = pd.concat(dfs, ignore_index=True)
         
         # make a new CSV for the dataframe
+        print("Exporting....")
         compression_opts = dict(method='zip', archive_name='out.csv')  
-        combined_df.to_csv('out.zip', index=False, compression=compression_opts)  
+        combined_df.to_csv('out.zip', index=False, compression=compression_opts)
+
+        print("CSV files successfully combined and exported.")  
         return combined_df
