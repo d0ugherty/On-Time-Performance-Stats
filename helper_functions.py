@@ -1,5 +1,7 @@
 # Functions that can be called to hopefully make my life easier
 # and make the project more readable
+
+import os
 import pandas as pd
 class helper():
 
@@ -43,8 +45,12 @@ class helper():
 
     # clean up weather dataframes
     def format_weather(current_df, month=""):
-        new_df = current_df.astype({'DATE':'datetime64'})
-        new_df.drop(labels=['ELEVATION', 'MDSF', 'AWND', 'SNWD', 'WESD', 'WESF','WT01', 'WT02', 'WT03', 'WT04', 'WT05',"WT06","WT07","WT08","WT09","WT11"], axis=1, inplace=True)
+        new_df = current_df.astype({'STATION':'category',
+                                    'DATE':'datetime64[ns]'})
+        new_df.drop(labels=['ELEVATION', 'MDSF', 'AWND', 'SNWD',
+                            'WESD', 'WESF','WT01', 'WT02', 'WT03',
+                            'WT04', 'WT05',"WT06","WT07","WT08",
+                            "WT09","WT11"], axis=1, inplace=True)
         if month == "" :
             return new_df
         else:
@@ -77,11 +83,25 @@ class helper():
     ### this is used for breaking down performence by rail line
     def create_new_dataframe(list_njt_lines, list_max_delays, list_avg_delays, list_dates):
         df = pd.DataFrame({'Longest Delay (minutes)': list_max_delays.values,
-                                    'Average Delay (minutes)': list_avg_delays.values,
-                                    'Date of Longest Delay' : list_dates.values},
-                                        index=list_njt_lines)
+                            'Average Delay (minutes)': list_avg_delays.values,
+                            'Date of Longest Delay' : list_dates.values},
+                            index=list_njt_lines)
         df = df.astype({'Longest Delay (minutes)' :'float16',
-                            'Average Delay (minutes)' :'float16',
-                            'Date of Longest Delay' : 'datetime64'
+                        'Average Delay (minutes)' :'float16',
+                        'Date of Longest Delay' : 'datetime64[ns]'
                             })
         return df
+    
+    def combine_csvs(directory):
+        csv_files = [f for f in os.listdir(directory) if f.endswith('.csv')]
+        dfs = []
+        for file in csv_files:
+            df = pd.read_csv(os.path.join(directory, file))
+            dfs.append(df)
+
+        combined_df = pd.concat(dfs, ignore_index=True)
+        
+        # make a new CSV for the dataframe
+        compression_opts = dict(method='zip', archive_name='out.csv')  
+        combined_df.to_csv('out.zip', index=False, compression=compression_opts)  
+        return combined_df
