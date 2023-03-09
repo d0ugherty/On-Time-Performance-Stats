@@ -3,6 +3,7 @@
 
 import os
 import pandas as pd
+import matplotlib.pyplot as plt
 class helper():
 
     # return list of train ids with the longest delays
@@ -141,3 +142,12 @@ class helper():
             else:
                 count[3] += 1
         return count
+    
+    ### creates chart for the on time perforfmance from a datarame
+    def chart_otp(dataframe):
+        lateness_count = helper.categorize_lateness(dataframe)
+        late_labels = ['On Time', '3-5 Minutes Late', '5-10 Minutes Late', 'More Than 10 Minutes Late']
+        late_colors = ['green', 'yellow', 'orange', 'red']
+        # create visualization 
+        plt.pie(lateness_count,labels = late_labels, colors=late_colors, radius=1.4,autopct = "%0.2f%%", startangle=270)
+        
