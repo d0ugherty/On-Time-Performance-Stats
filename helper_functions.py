@@ -43,7 +43,8 @@ class helper():
                 print("get delay date error")
         return lst
 
-    # clean up weather dataframes
+    ### Removes unused columns from weather dataframe and converts objects to datatypes. 
+    ### Takes an optional month name string to return a dataframe for a single month  
     def format_weather(current_df, month=""):
         print("Formatting weather dataframe...")
         new_df = current_df.astype({'STATION':'category',
@@ -100,6 +101,8 @@ class helper():
     
     ### combines all CSV files into a single dataframe
     ### it also exports the dataframe into a combined CSV file
+    ### combines all CSV files into a single dataframe
+    ### it also exports the dataframe into a combined CSV file
     def combine_csvs(directory):
         csv_files = [f for f in os.listdir(directory) if f.endswith('.csv')]
         dfs = []
@@ -113,7 +116,7 @@ class helper():
         combined_df = helper.format_services(combined_df)
         # make a new CSV for the dataframe
         print("Exporting....")
-        compression_opts = dict(method='zip', archive_name='out.csv')  
+        compression_opts = dict(method='zip', archive_name='df_output.csv')  
         combined_df.to_csv('out.zip', index=False, compression=compression_opts)
 
         print("CSV files successfully combined and exported.")  
