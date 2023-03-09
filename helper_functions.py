@@ -64,7 +64,8 @@ class helper():
     ### in the CSV file. Meadowlands is a special service so that is dropped as well.
     def format_services(current_df):
         print("Dropping columns...")
-        current_df.drop(labels=['status'], axis=1, inplace=True)
+        if 'status' in current_df:
+            current_df.drop(labels=['status'], axis=1, inplace=True)
         current_df.drop(current_df[current_df['type'] == 'Amtrak'].index, inplace=True)
         print("Changing datatypes...")
         new_df = current_df.astype({'date' : 'datetime64[ns]',
@@ -97,6 +98,8 @@ class helper():
                             })
         return df
     
+    ### combines all CSV files into a single dataframe
+    ### it also exports the dataframe into a combined CSV file
     def combine_csvs(directory):
         csv_files = [f for f in os.listdir(directory) if f.endswith('.csv')]
         dfs = []
@@ -105,9 +108,9 @@ class helper():
         for file in csv_files:
             df = pd.read_csv(os.path.join(directory, file))
             dfs.append(df)
-
         combined_df = pd.concat(dfs, ignore_index=True)
-        
+        print("Formatting new CSV file...")
+        combined_df = helper.format_services(combined_df)
         # make a new CSV for the dataframe
         print("Exporting....")
         compression_opts = dict(method='zip', archive_name='out.csv')  
@@ -115,3 +118,23 @@ class helper():
 
         print("CSV files successfully combined and exported.")  
         return combined_df
+
+    ### iterates through the data frame to retrieve the values of the delay_minutes column
+    ### in each row. 
+    ### count[0] = on time
+    ### count[1] = 3-5 mins late
+    ### count[2] = 5-10 mins late
+    ### count[3] = >10 mins late
+    def categorize_lateness(dataframe):
+        count = [0, 0, 0, 0]
+        column = dataframe['delay_minutes']
+        for delay in column:
+            if(delay < 3.0):
+                count[0] += 1
+            elif((delay >= 3.0) & (delay < 5.0) ):
+                count[1] += 1
+            elif((delay >= 5.0) & (delay <= 10.0)):
+                count[2] += 1
+            else:
+                count[3] += 1
+        return count

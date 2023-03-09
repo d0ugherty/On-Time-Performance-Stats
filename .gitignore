@@ -162,4 +162,5 @@ cython_debug/
 # misc.
 
 
+data/
 out.zip
