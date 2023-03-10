@@ -3,6 +3,7 @@
 
 import os
 import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
 class helper():
 
@@ -144,10 +145,25 @@ class helper():
         return count
     
     ### creates chart for the on time perforfmance from a datarame
-    def chart_otp(dataframe):
+    ### takes optional parameter for a title
+    def chart_otp(dataframe,title=""):
         lateness_count = helper.categorize_lateness(dataframe)
         late_labels = ['On Time', '3-5 Minutes Late', '5-10 Minutes Late', 'More Than 10 Minutes Late']
         late_colors = ['green', 'yellow', 'orange', 'red']
-        # create visualization 
-        plt.pie(lateness_count,labels = late_labels, colors=late_colors, radius=1.4,autopct = "%0.2f%%", startangle=270)
+        # create visualization
+        if title == "": 
+            plt.pie(lateness_count,labels = late_labels, colors=late_colors, radius=1.2,autopct = "%0.2f%%", startangle=270)
+        else:
+            plt.pie(lateness_count,labels = late_labels, colors=late_colors, radius=1.2,autopct = "%0.2f%%", startangle=270)
+            plt.title(label=title, fontdict={"fontsize":16}, pad=20)
+    
+    ### calculate the on time performance of a dataframe
+    ### OTP is calculated Services On Time divided by Total Services multipleid by 100
+    def calculate_otp(dataframe):
+        count = helper.categorize_lateness(dataframe)
+        on_time = count[0]
+        total_srvc = on_time + count[1] + count[2] + count[3]
+        return ((on_time / total_srvc) * 100)
+    
+    
         
