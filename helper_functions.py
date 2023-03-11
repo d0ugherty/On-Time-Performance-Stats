@@ -49,16 +49,19 @@ class helper():
     ### Takes an optional month name string to return a dataframe for a single month  
     def format_weather(current_df, month=""):
         print("Formatting weather dataframe...")
+        print("Changing datatypes...")
         new_df = current_df.astype({'STATION':'category',
                                     'DATE':'datetime64[ns]'})
-        
+        print("Dropping columns...")
         new_df.drop(labels=['ELEVATION', 'MDSF', 'AWND', 'SNWD',
                             'WESD', 'WESF','WT01', 'WT02', 'WT03',
                             'WT04', 'WT05',"WT06","WT07","WT08",
                             "WT09","WT11"], axis=1, inplace=True)
         if month == "" :
+            print("Done formatting weather dataframe")
             return new_df
         else:
+            print("Done formatting weather dataframe")
             new_df_w_month = new_df.loc[new_df['DATE'].apply(pd.Timestamp.month_name) == month]
             return new_df_w_month
     
@@ -152,11 +155,12 @@ class helper():
         late_colors = ['green', 'yellow', 'orange', 'red']
         # create visualization
         if title == "": 
-            plt.pie(lateness_count,labels = late_labels, colors=late_colors, radius=1.2,autopct = "%0.2f%%", startangle=270)
+            chart = plt.pie(lateness_count,labels = late_labels, colors=late_colors, radius=1.2,autopct = "%0.2f%%", startangle=270)
+            return chart
         else:
-            plt.pie(lateness_count,labels = late_labels, colors=late_colors, radius=1.2,autopct = "%0.2f%%", startangle=270)
+            chart = plt.pie(lateness_count,labels = late_labels, colors=late_colors, radius=1.2,autopct = "%0.2f%%", startangle=270)
             plt.title(label=title, fontdict={"fontsize":16}, pad=20)
-    
+            return chart
     ### calculate the on time performance of a dataframe
     ### OTP is calculated Services On Time divided by Total Services multipleid by 100
     def calculate_otp(dataframe):
