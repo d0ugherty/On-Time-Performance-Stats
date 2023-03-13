@@ -53,7 +53,7 @@ class helper():
         new_df = current_df.astype({'STATION':'category',
                                     'DATE':'datetime64[ns]'})
         print("Dropping columns...")
-        new_df.drop(labels=['ELEVATION', 'MDSF', 'AWND', 'SNWD',
+        new_df.drop(labels=['ELEVATION','LATITUDE', 'LONGITUDE', 'MDSF', 'AWND', 'SNWD',
                             'WESD', 'WESF','WT01', 'WT02', 'WT03',
                             'WT04', 'WT05',"WT06","WT07","WT08",
                             "WT09","WT11"], axis=1, inplace=True)
@@ -93,7 +93,7 @@ class helper():
 
     ### create new dataframe and assign types
     ### this is used for breaking down performence by rail line
-    def create_new_dataframe(list_njt_lines, list_max_delays, list_avg_delays, list_dates):
+    def get_avg_longest(list_njt_lines, list_max_delays, list_avg_delays, list_dates):
         df = pd.DataFrame({'Longest Delay (minutes)': list_max_delays.values,
                             'Average Delay (minutes)': list_avg_delays.values,
                             'Date of Longest Delay' : list_dates.values},
@@ -130,37 +130,68 @@ class helper():
     ### iterates through the data frame to retrieve the values of the delay_minutes column
     ### in each row. 
     ### count[0] = on time
-    ### count[1] = 3-5 mins late
-    ### count[2] = 5-10 mins late
-    ### count[3] = >10 mins late
+    ### count[1] = 6-10 mins late
+    ### count[2] = 10-15 mins late
+    ### count[3] = >15 mins late
     def categorize_lateness(dataframe):
         count = [0, 0, 0, 0]
         column = dataframe['delay_minutes']
         for delay in column:
-            if(delay < 3.0):
+            if(delay < 6.0):
                 count[0] += 1
-            elif((delay >= 3.0) & (delay < 5.0) ):
+            elif((delay >= 6.0) & (delay < 10.0) ):
                 count[1] += 1
-            elif((delay >= 5.0) & (delay <= 10.0)):
+            elif((delay >= 10.0) & (delay < 15.0)):
                 count[2] += 1
             else:
                 count[3] += 1
         return count
     
-    ### creates chart for the on time perforfmance from a datarame
-    ### takes optional parameter for a title
-    def chart_otp(dataframe,title=""):
-        lateness_count = helper.categorize_lateness(dataframe)
-        late_labels = ['On Time', '3-5 Minutes Late', '5-10 Minutes Late', 'More Than 10 Minutes Late']
-        late_colors = ['green', 'yellow', 'orange', 'red']
-        # create visualization
-        if title == "": 
-            chart = plt.pie(lateness_count,labels = late_labels, colors=late_colors, radius=1.2,autopct = "%0.2f%%", startangle=270)
-            return chart
-        else:
-            chart = plt.pie(lateness_count,labels = late_labels, colors=late_colors, radius=1.2,autopct = "%0.2f%%", startangle=270)
-            plt.title(label=title, fontdict={"fontsize":16}, pad=20)
-            return chart
+    ########################################
+    
+    def get_otp_data(dataframe,column_name, categories, year = None, month = None):
+        otp_data = []
+        if((year == None) & (month == None)):
+                print("none")
+                for item in categories:
+                        otp_item = helper.categorize_lateness(dataframe[(dataframe[column_name] == item)])
+                        otp_data.append(otp_item)
+                return otp_data
+        elif((year != None) & (month != None)):
+                print("year and month")
+                for item in categories:
+                        otp_item = helper.categorize_lateness((dataframe[column_name] == item) & 
+                                                              (dataframe['date'].dt.year == year) & 
+                                                              (dataframe['date'].dt.month == month))
+                        otp_data.append(otp_item)
+                return otp_data
+        elif (year != None):
+                print("by year")
+                for item in categories:
+                        otp_item = helper.categorize_lateness(dataframe[(dataframe[column_name] == item) & 
+                                                                           (dataframe['date'].dt.year == year)])
+                        otp_data.append(otp_item)
+                return otp_data
+        elif (month != None):
+             print("by month")
+             for item in categories:
+                        otp_item = helper.categorize_lateness(dataframe[(dataframe[column_name] == item) & 
+                                                                           (dataframe['date'].dt.month == month)])
+                        otp_data.append(otp_item)
+        return np.asarray(otp_data)
+    
+    ### Takes an array of integer arrays as a parameter
+    ### and iteratively plots the data
+    def chart_subplots(data, cat_labels, leg_labels, otp_colors,title=""):
+        fig = plt.figure(figsize=(15,12))
+        for n, count in enumerate(data):
+            ax = plt.subplot(3,4, n+1)
+            ax.pie(data[n], colors=otp_colors, radius = 1.2, autopct = "%0.2f%%", startangle=270)
+            ax.title.set_text(cat_labels[n])
+        plt.legend(bbox_to_anchor = (1.5, 1.0), labels = leg_labels)
+        fig.suptitle(title,fontsize=16)
+        plt.show()
+        
     ### calculate the on time performance of a dataframe
     ### OTP is calculated Services On Time divided by Total Services multipleid by 100
     def calculate_otp(dataframe):
