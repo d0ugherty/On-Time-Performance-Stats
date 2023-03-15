@@ -81,8 +81,8 @@ class helper():
                         'from_id': 'category',
                         'to' : 'category',
                         'to_id': 'category',
-                        'scheduled_time' : 'datetime64',
-                        'actual_time' : 'datetime64',
+                        'scheduled_time' : 'datetime64[ns]',
+                        'actual_time' : 'datetime64[ns]',
                         'delay_minutes' : 'float16',
                         'line' : 'category',
                         'type' : 'category'},
@@ -198,7 +198,6 @@ class helper():
         count = helper.categorize_lateness(dataframe)
         on_time = count[0]
         total_srvc = on_time + count[1] + count[2] + count[3]
-        return ((on_time / total_srvc) * 100)
-    
+        return round((on_time / total_srvc) * 100, 2)
     
         
