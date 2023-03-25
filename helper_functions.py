@@ -194,7 +194,7 @@ class helper():
         
     ### calculate the on time performance of a dataframe
     ### OTP is calculated Services On Time divided by Total Services multipleid by 100
-    def calculate_otp(dataframe):
+    def on_time_performance(dataframe):
         count = helper.categorize_lateness(dataframe)
         on_time = count[0]
         total_srvc = on_time + count[1] + count[2] + count[3]
