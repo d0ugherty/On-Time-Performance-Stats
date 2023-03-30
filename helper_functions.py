@@ -210,17 +210,19 @@ class helper():
         pm_start = pd.to_datetime("16:00:00")
         pm_end = pd.to_datetime("19:00:00")
         # AM Peak
-        am_peak_dest = trains_to_dest[(trains_to_dest['scheduled_time'].dt.time >= am_start.time()) & (trains_to_dest['scheduled_time'].dt.time <= am_end.time())]
+        am_peak_dest = trains_to_dest[(trains_to_dest['scheduled_time'].dt.time >= am_start.time()) & 
+                                      (trains_to_dest['scheduled_time'].dt.time <= am_end.time())]
         am_peak_dest = am_peak_dest.drop(am_peak_dest[am_peak_dest['date'].dt.weekday > 4].index)
 
-        print(am_peak_dest)
         # PM Peak
-        pm_peak_dest = trains_to_dest[(trains_to_dest['scheduled_time'].dt.time >= pm_start.time()) & (trains_to_dest['scheduled_time'].dt.time <= pm_end.time())]
+        pm_peak_dest = trains_to_dest[(trains_to_dest['scheduled_time'].dt.time >= pm_start.time()) & 
+                                      (trains_to_dest['scheduled_time'].dt.time <= pm_end.time())]
         pm_peak_dest = pm_peak_dest.drop(pm_peak_dest[pm_peak_dest['date'].dt.weekday > 4].index)
 
         #Off Peak
         off_peak1 = trains_to_dest[(trains_to_dest['scheduled_time'].dt.time < am_start.time())]
-        off_peak2 = trains_to_dest[(trains_to_dest['scheduled_time'].dt.time > am_end.time()) & (trains_to_dest['scheduled_time'].dt.time < pm_start.time())]
+        off_peak2 = trains_to_dest[(trains_to_dest['scheduled_time'].dt.time > am_end.time()) & 
+                                   (trains_to_dest['scheduled_time'].dt.time < pm_start.time())]
         off_peak3 = trains_to_dest[(trains_to_dest['scheduled_time'].dt.time > pm_end.time())]
         off_peak_dest = pd.concat([off_peak1, off_peak2])
         off_peak_dest = pd.concat([off_peak3, off_peak_dest])
@@ -230,8 +232,6 @@ class helper():
         weekday_dest = trains_to_dest[(trains_to_dest['scheduled_time'].dt.weekday <= 4)]
         #all weekend
         weekend_dest = trains_to_dest[(trains_to_dest['scheduled_time'].dt.weekday > 4)]
-
-        lines_to_dest = trains_to_dest['line'].unique()
 
         am_peak_otp =  0.0 if am_peak_dest.empty else helper.on_time_performance(am_peak_dest)
         pm_peak_otp = 0.0 if pm_peak_dest.empty else helper.on_time_performance(pm_peak_dest)
