@@ -209,12 +209,8 @@ class helper():
     
     ### builds dataframes of services termination at a given destination
     ### and returns the on time performance for each time interval
-    def otp_for_destination(dataframe, destination, month=None):
-        if month != None:
-            print(month)
-            trains_to_dest = dataframe[(dataframe['to'] == destination) & (dataframe['date'].dt.month == month)]
-        else:
-            trains_to_dest = dataframe[(dataframe['to'] == destination)]
+    def otp_for_destination(dataframe, destination):
+        trains_to_dest = dataframe[(dataframe['to'] == destination)]
         #trains_from_nyp = all_services[(all_services['from'] == 'New York Penn Station')]
         am_start = pd.to_datetime("06:00:00")
         am_end = pd.to_datetime("09:30:00")
@@ -253,5 +249,12 @@ class helper():
         otps = [am_peak_otp, pm_peak_otp, off_peak_otp, weekday_otp, weekend_otp]
 
         return otps
-
-        
+    
+    ##### Get monthly OTP
+    def get_monthly_otp(df, destination):
+        monthly_otp = []
+        for year in df['Year'].unique():
+            for month in df['Month'].unique():
+                monthly_services = df[(df['Year']==year) & (df['Month']==month)]
+                monthly_otp.append(helper.otp_for_destination(monthly_services, destination))
+        return monthly_otp
