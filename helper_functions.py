@@ -4,6 +4,7 @@
 import os
 import pandas as pd
 import numpy as np
+import statistics
 import matplotlib.pyplot as plt
 class helper():
 
@@ -200,10 +201,20 @@ class helper():
         total_srvc = on_time + count[1] + count[2] + count[3]
         return round((on_time / total_srvc) * 100, 2)
     
+    ### get the standard deviation
+    def calculate_std_dev(on_time_percentages):
+        std_dev = statistics.stdev(on_time_percentages)
+        return std_dev
+
+    
     ### builds dataframes of services termination at a given destination
     ### and returns the on time performance for each time interval
-    def otp_for_destination(dataframe, destination):
-        trains_to_dest = dataframe[(dataframe['to'] == destination)]
+    def otp_for_destination(dataframe, destination, month=None):
+        if month != None:
+            print(month)
+            trains_to_dest = dataframe[(dataframe['to'] == destination) & (dataframe['date'].dt.month == month)]
+        else:
+            trains_to_dest = dataframe[(dataframe['to'] == destination)]
         #trains_from_nyp = all_services[(all_services['from'] == 'New York Penn Station')]
         am_start = pd.to_datetime("06:00:00")
         am_end = pd.to_datetime("09:30:00")
