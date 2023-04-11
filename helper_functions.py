@@ -73,15 +73,12 @@ class helper():
         print("Dropping columns...")
         if 'status' in current_df:
             current_df.drop(labels=['status'], axis=1, inplace=True)
-        current_df.drop(current_df[current_df['type'] == 'Amtrak'].index, inplace=True)
+        current_df.drop(labels=['stop_sequence', 'from_id', 'to_id'], axis=1, inplace=True)
         print("Changing datatypes...")
         new_df = current_df.astype({'date' : 'datetime64[ns]',
                         'train_id' : 'category',
-                        'stop_sequence' : 'float16',
                         'from' : 'category',
-                        'from_id': 'category',
                         'to' : 'category',
-                        'to_id': 'category',
                         'scheduled_time' : 'datetime64[ns]',
                         'actual_time' : 'datetime64[ns]',
                         'delay_minutes' : 'float16',
@@ -89,6 +86,8 @@ class helper():
                         'type' : 'category'},
                         errors='ignore')
         new_df.drop(new_df[new_df['line'] == 'Meadowlands Rail'].index, inplace=True)
+        new_df.drop(current_df[current_df['type'] == 'Amtrak'].index, inplace=True)
+        new_df.dropna(how='any', inplace=True)
         print("Done formatting dataframe")
         return new_df
 
