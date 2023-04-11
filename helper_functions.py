@@ -25,7 +25,7 @@ class helper():
         return test_list
     
     # return list of the average delay (in minutes) for each line
-    def get_avg_delay(df,lines):
+    def get_avg_delay_by_line(df,lines):
         lst = []
         for line in lines:
             temp_df = df.loc[(df['line'] == line)]
