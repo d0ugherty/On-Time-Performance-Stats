@@ -73,7 +73,9 @@ class helper():
         print("Dropping columns...")
         if 'status' in current_df:
             current_df.drop(labels=['status'], axis=1, inplace=True)
-        current_df.drop(labels=['stop_sequence', 'from_id', 'to_id'], axis=1, inplace=True)
+        current_df.drop(current_df[current_df['line'] == 'Meadowlands Rail'].index, inplace=True)
+        current_df.drop(current_df[current_df['type'] == 'Amtrak'].index, inplace=True)
+        current_df.drop(labels=['stop_sequence', 'from_id', 'to_id', 'type'], axis=1, inplace=True)
         print("Changing datatypes...")
         new_df = current_df.astype({'date' : 'datetime64[ns]',
                         'train_id' : 'category',
@@ -82,11 +84,8 @@ class helper():
                         'scheduled_time' : 'datetime64[ns]',
                         'actual_time' : 'datetime64[ns]',
                         'delay_minutes' : 'float16',
-                        'line' : 'category',
-                        'type' : 'category'},
+                        'line' : 'category'},
                         errors='ignore')
-        new_df.drop(new_df[new_df['line'] == 'Meadowlands Rail'].index, inplace=True)
-        new_df.drop(current_df[current_df['type'] == 'Amtrak'].index, inplace=True)
         new_df.dropna(how='any', inplace=True)
         print("Done formatting dataframe")
         return new_df
@@ -94,13 +93,13 @@ class helper():
     ### create new dataframe and assign types
     ### this is used for breaking down performence by rail line
     def get_avg_longest(list_njt_lines, list_max_delays, list_avg_delays, list_dates):
-        df = pd.DataFrame({'Longest Delay (minutes)': list_max_delays.values,
-                            'Average Delay (minutes)': list_avg_delays.values,
-                            'Date of Longest Delay' : list_dates.values},
+        df = pd.DataFrame({'Longest Delay (minutes)'    : list_max_delays.values,
+                            'Average Delay (minutes)'   : list_avg_delays.values,
+                            'Date of Longest Delay'     : list_dates.values},
                             index=list_njt_lines)
-        df = df.astype({'Longest Delay (minutes)' :'float16',
-                        'Average Delay (minutes)' :'float16',
-                        'Date of Longest Delay' : 'datetime64[ns]'
+        df = df.astype({'Longest Delay (minutes)'   :'float16',
+                        'Average Delay (minutes)'   :'float16',
+                        'Date of Longest Delay'     : 'datetime64[ns]'
                             })
         return df
     
@@ -198,7 +197,10 @@ class helper():
         count = helper.categorize_lateness(dataframe)
         on_time = count[0]
         total_srvc = on_time + count[1] + count[2] + count[3]
-        return round((on_time / total_srvc) * 100, 2)
+        if total_srvc == 0:
+            return None
+        else:
+            return round((on_time / total_srvc) * 100, 2)
     
     ### get the standard deviation
     def calculate_std_dev(on_time_percentages):
@@ -250,10 +252,10 @@ class helper():
         return otps
     
     ##### Get monthly OTP
-    def get_monthly_otp(df, destination):
-        monthly_otp = []
-        for year in df['Year'].unique():
-            for month in df['Month'].unique():
-                monthly_services = df[(df['Year']==year) & (df['Month']==month)]
-                monthly_otp.append(helper.otp_for_destination(monthly_services, destination))
-        return monthly_otp
+    def get_monthly_otps(df):
+        monthly_otps = []
+        for year in df['year'].unique():
+            for month in df['month'].unique():
+                monthly_services = df[(df['year']==year) & (df['month']==month)]
+                monthly_otps.append(helper.on_time_performance(monthly_services))
+        return monthly_otps
