@@ -73,9 +73,14 @@ class helper():
         print("Dropping columns...")
         if 'status' in current_df:
             current_df.drop(labels=['status'], axis=1, inplace=True)
-        current_df.drop(current_df[current_df['line'] == 'Meadowlands Rail'].index, inplace=True)
-        current_df.drop(current_df[current_df['type'] == 'Amtrak'].index, inplace=True)
-        current_df.drop(labels=['stop_sequence', 'from_id', 'to_id', 'type'], axis=1, inplace=True)
+        if 'line' in current_df:
+            current_df.drop(current_df[current_df['line'] == 'Meadowlands Rail'].index, inplace=True)
+        if 'type' in current_df:
+            current_df.drop(labels=['type'], inplace=True)
+        if 'stop_sequence' in current_df:
+            current_df.drop(labels=['stop_sequence'], axis=1, inplace=True)
+        if ('from_id' in current_df) & ('to_id' in current_df):
+            current_df.drop(labels=['from_id', 'to_id'], axis=1, inplace=True)
         print("Changing datatypes...")
         new_df = current_df.astype({'date' : 'datetime64[ns]',
                         'train_id' : 'category',
@@ -120,7 +125,7 @@ class helper():
         combined_df = helper.format_services(combined_df)
         # make a new CSV for the dataframe
         print("Exporting....")
-        compression_opts = dict(method='zip', archive_name='df_output.csv')  
+        compression_opts = dict(method='zip', archive_name='all_services.csv')  
         combined_df.to_csv('out.zip', index=False, compression=compression_opts)
 
         print("CSV files successfully combined and exported.")  
