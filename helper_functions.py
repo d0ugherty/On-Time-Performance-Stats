@@ -275,3 +275,11 @@ class helper():
                 monthly_services = df[(df['year']==year) & (df['month']==month)]
                 monthly_otps.append(helper.on_time_performance(monthly_services))
         return monthly_otps
+    
+    ### Returns array of delay_minutes values for late arrivals
+    def get_late_arrivals(df):
+        late_arrivals =[]
+        for delay in df['delay_minutes']:
+             if(delay > 5.99):
+                  late_arrivals.append(delay)
+        return late_arrivals
