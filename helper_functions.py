@@ -207,6 +207,17 @@ class helper():
         else:
             return round((on_time / total_srvc) * 100, 2)
     
+    ### calculate the probability of a train being late
+    ### essentially the on_time_perforamnce() function upside down
+    def late_prob(dataframe):
+         count = helper.categorize_lateness(dataframe)
+         late_trains = count[1] + count[2] + count[3]
+         total_srvc = late_trains + count[0]
+         if total_srvc == 0:
+              return None
+         else:
+              return round((late_trains / total_srvc), 2)
+
     ### get the standard deviation
     def calculate_std_dev(on_time_percentages):
         std_dev = statistics.stdev(on_time_percentages)
