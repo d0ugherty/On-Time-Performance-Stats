@@ -1,3 +1,4 @@
+
 import os
 import pandas as pd
 import numpy as np
@@ -32,14 +33,15 @@ class csv():
         if 'status' in current_df:
             current_df.drop(labels=['status'], axis=1, inplace=True)
         if 'line' in current_df:
-            current_df.drop(current_df[current_df['line'] == 'Meadowlands Rail'].index, inplace=True)
+            current_df = current_df[current_df['line'] != 'Meadowlands Rail']
         if 'type' in current_df:
-            current_df.drop(labels=['type'], inplace=True)
+            current_df.drop(labels=['type'], axis = 1, inplace=True)
         if 'stop_sequence' in current_df:
             current_df.drop(labels=['stop_sequence'], axis=1, inplace=True)
         if ('from_id' in current_df) & ('to_id' in current_df):
             current_df.drop(labels=['from_id', 'to_id'], axis=1, inplace=True)
         print("Changing datatypes...")
+        print(current_df)
         new_df = current_df.astype({'date' : 'datetime64[ns]',
                         'train_id' : 'category',
                         'from' : 'category',
