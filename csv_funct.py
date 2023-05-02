@@ -41,7 +41,6 @@ class csv():
         if ('from_id' in current_df) & ('to_id' in current_df):
             current_df.drop(labels=['from_id', 'to_id'], axis=1, inplace=True)
         print("Changing datatypes...")
-        print(current_df)
         new_df = current_df.astype({'date' : 'datetime64[ns]',
                         'train_id' : 'category',
                         'from' : 'category',
