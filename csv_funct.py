@@ -13,10 +13,11 @@ class csv():
         new_df = current_df.astype({'STATION':'category',
                                     'DATE':'datetime64[ns]'})
         print("Dropping columns...")
-        new_df.drop(labels=['ELEVATION','LATITUDE', 'LONGITUDE', 'MDSF', 'AWND', 'SNWD',
+        new_df.drop(labels=['ELEVATION','MDSF', 'AWND', 'SNWD',
                             'WESD', 'WESF','WT01', 'WT02', 'WT03',
                             'WT04', 'WT05',"WT06","WT07","WT08",
                             "WT09","WT11"], axis=1, inplace=True)
+        new_df.rename(columns={'DATE':'date'}, inplace='true')
         if month == "" :
             print("Done formatting weather dataframe")
             return new_df
