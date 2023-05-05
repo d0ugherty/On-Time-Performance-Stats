@@ -1,5 +1,5 @@
 # On-Time-Performance-Stats
-This is a semester-long project for Probability & Statistics for Computer Science
+This is a semester-long project for my Probability & Statistics for Computer Science course.
 
 It uses descriptive statistics and data visualizations to analyse the on time performance of New Jersey Transit
 commuter rail between 2018 and 2020. 
