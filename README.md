@@ -8,5 +8,7 @@ This project was a fun way to learn both Python and probability & statistcs. If 
 
 This data set was chosen because I've always been interested in transportation and regional planning. Data like this would be great for predicting future delays, scheduling, and using it alongside other datasets (i.e. weather data like the author suggests). The author scraped data from NJT's DepartureVision realtime status service. I have my own project using SEPTA's real time data and this might inspire me to create something similar.
 
+This was my first project in Python so I was learning as I went along with it. There is some janky, inefficient code in here that I would have liked to cleanup. I think this is something I'll come back to after final grades are in.
+
 The on time performance data used for this project can be found here:
 https://www.kaggle.com/datasets/pranavbadami/nj-transit-amtrak-nec-performance?resource=download
